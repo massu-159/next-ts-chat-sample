@@ -6,16 +6,11 @@ const { Server } = require("socket.io");
 const io = new Server(server, {
   cors: {
     origin: ["localhost://3000"],
+    credentials: true,
   },
 });
 
-
-
 const PORT = 5001;
-
-app.get('/', (req, res) => {
-  res.send('<h1>Hello World</h1>');
-});
 
 // クライアントと通信
 io.on("connection", (socket) => {
@@ -23,7 +18,10 @@ io.on("connection", (socket) => {
 
   socket.on("send_message", (data) => {
     console.log(data);
-  })
+
+    // クライアントへ送信
+    io.emit("received_message", data);
+  });
 
   socket.on("disconnect", () => {
     console.log("クライアントとの接続を切断。");
